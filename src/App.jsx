@@ -26,7 +26,7 @@ const router = createBrowserRouter([
                 element: <Dashboard />,
                 loader: dashboardLoader,
                 action: dashboardAction,
-                errorElement: <Error />,
+                errorElement: <Error />
             },
             { path: "logout", action: logoutAction }
         ]
