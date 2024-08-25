@@ -28,14 +28,14 @@ export const createExpense = ({ name, amount, budgetId }) => {
         amount: +amount,
         budgetId
     };
-    const existingExpenses = fetchData("Expenses") ?? [];
+    const existingExpenses = fetchData("expenses") ?? [];
     return localStorage.setItem(
         "expenses",
         JSON.stringify([...existingExpenses, newItem])
     );
 };
 
-export const deleteItem = key => {
+export const deleteItem = ({ key }) => {
     return localStorage.removeItem(key);
 };
 
@@ -46,6 +46,8 @@ export const formetCurrency = amt => {
         currency: "USD"
     });
 };
+// FORMATTING
+export const formatDateToLocaleString = (epoch) => new Date(epoch).toLocaleDateString();
 
 export const calculateSpentByBudget = budgetId => {
     const expenses = fetchData("expenses") ?? [];
@@ -59,9 +61,9 @@ export const calculateSpentByBudget = budgetId => {
     return budgetSpent;
 };
 // Formating percentages
-export const formatPercentage = (amt) => {
-  return amt.toLocaleString(undefined, {
-    style: "percent",
-    minimumFractionDigits: 0,
-  })
-}
+export const formatPercentage = amt => {
+    return amt.toLocaleString(undefined, {
+        style: "percent",
+        minimumFractionDigits: 0
+    });
+};

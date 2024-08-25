@@ -1,21 +1,24 @@
 // rrd imports
-import { useLoaderData } from "react-router-dom";
+import { Link, useLoaderData } from "react-router-dom";
 //react-toastify
 import { toast } from "react-toastify";
 //  helper functions
-import { fetchData, createBudget,createExpense } from "../helpers";
+import { fetchData, createBudget, createExpense } from "../helpers";
 // components
 import Intro from "../components/Intro";
-import BudgetItem  from "../components/BudgetItem";
+import BudgetItem from "../components/BudgetItem";
 
 import BudgetForm from "../components/BedgetForm";
 import ExpenseForm from "../components/ExpenseForm";
+import Table from "../components/Table";
 // loader
 export function dashboardLoader() {
     const userName = fetchData("userName");
     const budgets = fetchData("budgets");
-    return { userName, budgets };
+    const expenses = fetchData("expenses");
+    return { userName, budgets, expenses };
 }
+
 //actions
 export async function dashboardAction({ request }) {
     const data = await request.formData();
@@ -40,11 +43,11 @@ export async function dashboardAction({ request }) {
         }
     }
     if (_action === "createExpense") {
-      createExpense({
-        name:values.newExpense,
-        amount:values.newExpenseAmount,
-        budgetId:values.newExpenseBudget
-      })
+        createExpense({
+            name: values.newExpense,
+            amount: values.newExpenseAmount,
+            budgetId: values.newExpenseBudget
+        });
         try {
             return toast.success(`Expense ${values.newExpense} created!`);
         } catch (e) {
@@ -54,11 +57,9 @@ export async function dashboardAction({ request }) {
 }
 
 const Dashboard = () => {
-    const { userName, budgets } = useLoaderData();
+    const { userName, budgets, expenses } = useLoaderData();
     return (
         <div>
-            {/* {localStorage.setItem("userName", '"NaingWin"')}*/}
-            {/*{localStorage.removeItem("budgets")}*/}
             {userName ? (
                 <div className="dashboard">
                     <h1>
@@ -72,9 +73,34 @@ const Dashboard = () => {
                                     <ExpenseForm />
                                 </div>
                                 <h2>Existing Budgets</h2>
-                               <div className="budgets"> 
-                               {budgets.map(budget=>(<BudgetItem key={budget.id} budget={budget}/>))}
-                               </div> 
+                                <div className="budgets">
+                                    {budgets.map(budget => (
+                                        <BudgetItem
+                                            key={budget.id}
+                                            budget={budget}
+                                        />
+                                    ))}
+                                </div>
+                                {expenses && (
+                                    <div className="grid-md">
+                                        <h2>Recent Expenses</h2>
+                                        <Table
+                                            expenses={expenses
+                                                .sort(
+                                                    (a, b) =>
+                                                        b.createdAt -
+                                                        a.createdAt
+                                                )
+                                                .slice(0, 8)}
+                                        />
+
+                                        {expenses.length > 5 && (
+                                            <Link className="btn btn--dark" to="expenses">
+                                                View All Expenses
+                                            </Link>
+                                        )}
+                                    </div>
+                                )}
                             </div>
                         ) : (
                             <div className="grid-sm">
