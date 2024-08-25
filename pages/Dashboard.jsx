@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { fetchData, createBudget,createExpense } from "../helpers";
 // components
 import Intro from "../components/Intro";
+import BudgetItem  from "../components/BudgetItem";
 
 import BudgetForm from "../components/BedgetForm";
 import ExpenseForm from "../components/ExpenseForm";
@@ -70,6 +71,10 @@ const Dashboard = () => {
                                     <BudgetForm />
                                     <ExpenseForm />
                                 </div>
+                                <h2>Existing Budgets</h2>
+                               <div className="budgets"> 
+                               {budgets.map(budget=>(<BudgetItem key={budget.id} budget={budget}/>))}
+                               </div> 
                             </div>
                         ) : (
                             <div className="grid-sm">
