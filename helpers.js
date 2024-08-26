@@ -35,9 +35,23 @@ export const createExpense = ({ name, amount, budgetId }) => {
     );
 };
 
-export const deleteItem = ({ key }) => {
-    return localStorage.removeItem(key);
+// delete item from local storage
+export const deleteItem = ({ key, id }) => {
+  const existingData = fetchData(key);
+  if (id) {
+    const newData = existingData.filter((item) => item.id !== id);
+    return localStorage.setItem(key, JSON.stringify(newData));
+  }
+  return localStorage.removeItem(key);
 };
+
+// Get all items from local storage
+export const getAllMatchingItems = ({ category, key, value }) => {
+    const data = fetchData(category) ?? [];
+    return data.filter(item => item[key] === value);
+};
+
+
 
 //formet currency
 export const formetCurrency = amt => {
@@ -47,7 +61,8 @@ export const formetCurrency = amt => {
     });
 };
 // FORMATTING
-export const formatDateToLocaleString = (epoch) => new Date(epoch).toLocaleDateString();
+export const formatDateToLocaleString = epoch =>
+    new Date(epoch).toLocaleDateString();
 
 export const calculateSpentByBudget = budgetId => {
     const expenses = fetchData("expenses") ?? [];

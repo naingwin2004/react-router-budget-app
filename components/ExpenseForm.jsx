@@ -1,13 +1,21 @@
-import { useLoaderData, Form, useNavigation } from "react-router-dom";
+import {
+    useLoaderData,
+    Form,
+    useNavigation,
+    useParams
+} from "react-router-dom";
+
 import { useRef, useEffect } from "react";
 
 //icon
 import { PlusCircleIcon } from "@heroicons/react/24/solid";
+
 const ExpenseForm = () => {
+    const { id } = useParams();
     const formRef = useRef();
     const focusRef = useRef();
     const navigation = useNavigation();
-    const { userName, budgets } = useLoaderData();
+    const { userName, budgets = [] } = useLoaderData();
 
     const isSubmitting = navigation.state === "submitting";
 
@@ -22,8 +30,9 @@ const ExpenseForm = () => {
             <h2 className="h3">
                 Add New{" "}
                 <span className="accent">
-                    {" "}
-                    {budgets.length === 1 && budgets.map(budg => budg.name)}
+                    {!!id ||
+                        (budgets.length === 1 &&
+                            budgets.map(budg => budg.name))}
                 </span>
                 Expense
             </h2>
@@ -53,13 +62,9 @@ const ExpenseForm = () => {
                         />
                     </div>
                 </div>
-                <div className="grid-xs" hidden={budgets.length === 1}>
+                <div className="grid-xs" hidden={!!id || budgets.length === 1}>
                     <label htmlFor="newExpenseBudget">Budget Category</label>
-                    <select
-                        name="newExpenseBudget"
-                        id="newExpenseBudget"
-                        required
-                    >
+                    <select name="newExpenseBudget" id="newExpenseBudget">
                         {budgets
                             .sort((a, b) => a.createdAt - b.createdAt)
                             .map(budget => {
@@ -72,20 +77,20 @@ const ExpenseForm = () => {
                     </select>
                 </div>
                 <input type="hidden" name="_action" value="createExpense" />
-            <button
-                type="submit"
-                className="btn btn--dark"
-                disabled={isSubmitting}
-            >
-                {isSubmitting ? (
-                    <span>Submitting…</span>
-                ) : (
-                    <>
-                        <span>Add Expense</span>
-                        <PlusCircleIcon width={20} />
-                    </>
-                )}
-            </button>
+                <button
+                    type="submit"
+                    className="btn btn--dark"
+                    disabled={isSubmitting}
+                >
+                    {isSubmitting ? (
+                        <span>Submitting…</span>
+                    ) : (
+                        <>
+                            <span>Add Expense</span>
+                            <PlusCircleIcon width={20} />
+                        </>
+                    )}
+                </button>
             </Form>
         </div>
     );

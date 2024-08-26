@@ -3,7 +3,7 @@ import { Link, useLoaderData } from "react-router-dom";
 //react-toastify
 import { toast } from "react-toastify";
 //  helper functions
-import { fetchData, createBudget, createExpense } from "../helpers";
+import { fetchData, createBudget, createExpense, deleteItem } from "../helpers";
 // components
 import Intro from "../components/Intro";
 import BudgetItem from "../components/BudgetItem";
@@ -54,6 +54,17 @@ export async function dashboardAction({ request }) {
             throw new Error("There was a problem creating your budget.");
         }
     }
+    if (_action === "deleteExpense") {
+        try {
+            deleteItem({
+                key: "expenses",
+                id: values.expenseId
+            });
+            return toast.success("Expense deleted!");
+        } catch (e) {
+            throw new Error("There was a problem deleting your expense.");
+        }
+    }
 }
 
 const Dashboard = () => {
@@ -81,7 +92,7 @@ const Dashboard = () => {
                                         />
                                     ))}
                                 </div>
-                                {expenses && (
+                                {expenses && expenses.length > 0 && (
                                     <div className="grid-md">
                                         <h2>Recent Expenses</h2>
                                         <Table
@@ -95,7 +106,10 @@ const Dashboard = () => {
                                         />
 
                                         {expenses.length > 5 && (
-                                            <Link className="btn btn--dark" to="expenses">
+                                            <Link
+                                                className="btn btn--dark"
+                                                to="expenses"
+                                            >
                                                 View All Expenses
                                             </Link>
                                         )}
